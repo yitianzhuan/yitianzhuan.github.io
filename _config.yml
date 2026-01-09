@@ -83,7 +83,7 @@ exclude:
 ignore:
 
 # Extensions
-theme: landscape
+theme: next
 
 # Deployment
 deploy:
