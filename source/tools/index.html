@@ -1,0 +1,459 @@
+---
+layout: false
+title: 在线工具
+date: 2026-01-10 00:34:54
+---
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>在线工具 - 风凉凉的技术博客</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: #1a1a1a;
+      color: #e0e0e0;
+      line-height: 1.6;
+      padding: 20px;
+    }
+
+    .tools-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .page-title {
+      text-align: center;
+      font-size: 36px;
+      margin-bottom: 40px;
+      color: #4c8eda;
+      font-weight: bold;
+    }
+
+    .tool-card {
+      background: #2d2d2d;
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 24px;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+      border: 1px solid #3d3d3d;
+    }
+
+    .tool-title {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 16px;
+      color: #4c8eda;
+      border-bottom: 2px solid #4c8eda;
+      padding-bottom: 8px;
+    }
+
+    .tool-input-group {
+      margin-bottom: 16px;
+    }
+
+    .tool-label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #e0e0e0;
+    }
+
+    .tool-input,
+    .tool-textarea,
+    .tool-select {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #4d4d4d;
+      border-radius: 6px;
+      background: #1a1a1a;
+      color: #e0e0e0;
+      font-size: 14px;
+      box-sizing: border-box;
+    }
+
+    .tool-input:focus,
+    .tool-textarea:focus {
+      outline: none;
+      border-color: #4c8eda;
+    }
+
+    .tool-textarea {
+      min-height: 120px;
+      font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+      resize: vertical;
+    }
+
+    .tool-buttons {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+
+    .tool-btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      background: #4c8eda;
+      color: white;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      transition: all 0.3s;
+    }
+
+    .tool-btn:hover {
+      opacity: 0.85;
+      transform: translateY(-1px);
+    }
+
+    .tool-btn.secondary {
+      background: #6c757d;
+    }
+
+    .tool-btn.success {
+      background: #28a745;
+    }
+
+    .tool-result {
+      margin-top: 16px;
+      padding: 12px;
+      background: #1f1f1f;
+      border-left: 4px solid #4c8eda;
+      border-radius: 4px;
+      word-break: break-all;
+      white-space: pre-wrap;
+      font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+      font-size: 13px;
+    }
+
+    .timestamp-display {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .timestamp-item {
+      padding: 12px;
+      background: #1f1f1f;
+      border-radius: 6px;
+      text-align: center;
+      border: 1px solid #3d3d3d;
+    }
+
+    .timestamp-value {
+      font-size: 18px;
+      font-weight: bold;
+      color: #4c8eda;
+      margin: 8px 0;
+    }
+
+    .timestamp-label {
+      font-size: 12px;
+      color: #b0b0b0;
+    }
+
+    .tool-row {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .tool-col {
+      flex: 1;
+      min-width: 250px;
+    }
+
+    a.back-link {
+      display: inline-block;
+      margin-bottom: 20px;
+      color: #4c8eda;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    a.back-link:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="tools-container">
+    <a href="/" class="back-link">← 返回首页</a>
+    <h1 class="page-title">🛠️ 在线开发工具</h1>
+
+    <!-- 时间戳转换工具 -->
+    <div class="tool-card">
+      <div class="tool-title">🕐 时间戳转换</div>
+
+      <div class="timestamp-display" id="currentTimestamp">
+        <div class="timestamp-item">
+          <div class="timestamp-label">当前时间戳（秒）</div>
+          <div class="timestamp-value" id="tsSeconds">-</div>
+        </div>
+        <div class="timestamp-item">
+          <div class="timestamp-label">当前时间戳（毫秒）</div>
+          <div class="timestamp-value" id="tsMilliseconds">-</div>
+        </div>
+        <div class="timestamp-item">
+          <div class="timestamp-label">当前时间</div>
+          <div class="timestamp-value" id="tsDateTime">-</div>
+        </div>
+      </div>
+
+      <div class="tool-input-group" style="margin-top: 20px;">
+        <label class="tool-label">时间戳 / 日期时间</label>
+        <input type="text" class="tool-input" id="timestampInput" placeholder="输入时间戳（如：1609459200）或日期时间（如：2021-01-01 00:00:00）">
+      </div>
+
+      <div class="tool-buttons">
+        <button class="tool-btn" onclick="convertTimestamp()">转换</button>
+        <button class="tool-btn secondary" onclick="refreshTimestamp()">刷新当前时间</button>
+      </div>
+
+      <div class="tool-result" id="timestampResult" style="display: none;"></div>
+    </div>
+
+    <!-- JSON 解析工具 -->
+    <div class="tool-card">
+      <div class="tool-title">📦 JSON 解析/格式化</div>
+
+      <div class="tool-input-group">
+        <label class="tool-label">JSON 字符串</label>
+        <textarea class="tool-textarea" id="jsonInput" placeholder='输入 JSON 字符串，如：{"name": "test", "value": 123}'></textarea>
+      </div>
+
+      <div class="tool-buttons">
+        <button class="tool-btn success" onclick="formatJSON()">格式化</button>
+        <button class="tool-btn" onclick="compressJSON()">压缩</button>
+        <button class="tool-btn secondary" onclick="copyResult('jsonResult')">复制结果</button>
+        <button class="tool-btn secondary" onclick="clearJSON()">清空</button>
+      </div>
+
+      <div class="tool-result" id="jsonResult" style="display: none;"></div>
+    </div>
+
+    <!-- URL 编码/解码工具 -->
+    <div class="tool-card">
+      <div class="tool-title">🔗 URL 编码/解码</div>
+
+      <div class="tool-row">
+        <div class="tool-col">
+          <div class="tool-input-group">
+            <label class="tool-label">原始文本</label>
+            <textarea class="tool-textarea" id="urlInput" placeholder="输入需要编码的 URL 或文本" style="min-height: 100px;"></textarea>
+          </div>
+        </div>
+        <div class="tool-col">
+          <div class="tool-input-group">
+            <label class="tool-label">编码/解码结果</label>
+            <textarea class="tool-textarea" id="urlResult" readonly placeholder="结果显示在这里" style="min-height: 100px;"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="tool-buttons">
+        <button class="tool-btn success" onclick="encodeURL()">URL 编码 (Encode)</button>
+        <button class="tool-btn" onclick="decodeURL()">URL 解码 (Decode)</button>
+        <button class="tool-btn secondary" onclick="copyToClipboard('urlResult')">复制结果</button>
+      </div>
+    </div>
+
+    <!-- Unicode 编码/解码工具 -->
+    <div class="tool-card">
+      <div class="tool-title">🔣 Unicode 编码/解码</div>
+
+      <div class="tool-row">
+        <div class="tool-col">
+          <div class="tool-input-group">
+            <label class="tool-label">原始文本 / Unicode</label>
+            <textarea class="tool-textarea" id="unicodeInput" placeholder="输入中文或 Unicode (如：\u4f60\u597d)" style="min-height: 100px;"></textarea>
+          </div>
+        </div>
+        <div class="tool-col">
+          <div class="tool-input-group">
+            <label class="tool-label">转换结果</label>
+            <textarea class="tool-textarea" id="unicodeResult" readonly placeholder="结果显示在这里" style="min-height: 100px;"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="tool-buttons">
+        <button class="tool-btn success" onclick="encodeUnicode()">转 Unicode (\uXXXX)</button>
+        <button class="tool-btn" onclick="decodeUnicode()">Unicode 转中文</button>
+        <button class="tool-btn secondary" onclick="copyToClipboard('unicodeResult')">复制结果</button>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // ==================== 时间戳转换工具 ====================
+    function refreshTimestamp() {
+      const now = new Date();
+      document.getElementById('tsSeconds').textContent = Math.floor(now.getTime() / 1000);
+      document.getElementById('tsMilliseconds').textContent = now.getTime();
+      document.getElementById('tsDateTime').textContent = now.toLocaleString('zh-CN');
+    }
+
+    function convertTimestamp() {
+      const input = document.getElementById('timestampInput').value.trim();
+      const resultDiv = document.getElementById('timestampResult');
+      let result = '';
+
+      if (!input) {
+        resultDiv.textContent = '请输入时间戳或日期时间';
+        resultDiv.style.display = 'block';
+        return;
+      }
+
+      // 判断是时间戳还是日期时间
+      if (/^\d+$/.test(input)) {
+        // 是纯数字，作为时间戳处理
+        const timestamp = parseInt(input);
+        const date = new Date(timestamp.toString().length === 10 ? timestamp * 1000 : timestamp);
+        result = `时间戳: ${input}\n日期时间: ${date.toLocaleString('zh-CN')}\nISO 格式: ${date.toISOString()}`;
+      } else {
+        // 作为日期时间处理
+        const date = new Date(input);
+        if (isNaN(date.getTime())) {
+          result = '日期格式不正确，请使用格式如：2021-01-01 00:00:00';
+        } else {
+          const seconds = Math.floor(date.getTime() / 1000);
+          const milliseconds = date.getTime();
+          result = `日期时间: ${input}\n时间戳（秒）: ${seconds}\n时间戳（毫秒）: ${milliseconds}`;
+        }
+      }
+
+      resultDiv.textContent = result;
+      resultDiv.style.display = 'block';
+    }
+
+    // ==================== JSON 工具 ====================
+    function formatJSON() {
+      const input = document.getElementById('jsonInput').value.trim();
+      const resultDiv = document.getElementById('jsonResult');
+
+      if (!input) {
+        resultDiv.textContent = '请输入 JSON 字符串';
+        resultDiv.style.display = 'block';
+        return;
+      }
+
+      try {
+        const obj = typeof input === 'object' ? input : JSON.parse(input);
+        resultDiv.innerHTML = `<pre style="margin: 0; white-space: pre-wrap;">${JSON.stringify(obj, null, 2)}</pre>`;
+        resultDiv.style.display = 'block';
+      } catch (e) {
+        resultDiv.textContent = 'JSON 格式错误: ' + e.message;
+        resultDiv.style.display = 'block';
+      }
+    }
+
+    function compressJSON() {
+      const input = document.getElementById('jsonInput').value.trim();
+      const resultDiv = document.getElementById('jsonResult');
+
+      if (!input) {
+        resultDiv.textContent = '请输入 JSON 字符串';
+        resultDiv.style.display = 'block';
+        return;
+      }
+
+      try {
+        const obj = JSON.parse(input);
+        resultDiv.textContent = JSON.stringify(obj);
+        resultDiv.style.display = 'block';
+      } catch (e) {
+        resultDiv.textContent = 'JSON 格式错误: ' + e.message;
+        resultDiv.style.display = 'block';
+      }
+    }
+
+    function clearJSON() {
+      document.getElementById('jsonInput').value = '';
+      document.getElementById('jsonResult').style.display = 'none';
+    }
+
+    // ==================== URL 编码/解码工具 ====================
+    function encodeURL() {
+      const input = document.getElementById('urlInput').value;
+      try {
+        const encoded = encodeURIComponent(input);
+        document.getElementById('urlResult').value = encoded;
+      } catch (e) {
+        document.getElementById('urlResult').value = '编码失败: ' + e.message;
+      }
+    }
+
+    function decodeURL() {
+      const input = document.getElementById('urlInput').value;
+      try {
+        const decoded = decodeURIComponent(input);
+        document.getElementById('urlResult').value = decoded;
+      } catch (e) {
+        document.getElementById('urlResult').value = '解码失败: ' + e.message;
+      }
+    }
+
+    // ==================== Unicode 编码/解码工具 ====================
+    function encodeUnicode() {
+      const input = document.getElementById('unicodeInput').value;
+      try {
+        const encoded = input.split('').map(char => {
+          const code = char.charCodeAt(0);
+          return code > 127 ? '\\u' + code.toString(16).padStart(4, '0') : char;
+        }).join('');
+        document.getElementById('unicodeResult').value = encoded;
+      } catch (e) {
+        document.getElementById('unicodeResult').value = '编码失败: ' + e.message;
+      }
+    }
+
+    function decodeUnicode() {
+      const input = document.getElementById('unicodeInput').value;
+      try {
+        const decoded = input.replace(/\\u[\dA-Fa-f]{4}/g, match => {
+          return String.fromCharCode(parseInt(match.replace('\\u', ''), 16));
+        });
+        document.getElementById('unicodeResult').value = decoded;
+      } catch (e) {
+        document.getElementById('unicodeResult').value = '解码失败: ' + e.message;
+      }
+    }
+
+    // ==================== 通用复制功能 ====================
+    function copyToClipboard(elementId) {
+      const element = document.getElementById(elementId);
+      const text = element.value || element.textContent;
+
+      navigator.clipboard.writeText(text).then(() => {
+        alert('已复制到剪贴板！');
+      }).catch(err => {
+        // 降级方案
+        element.select();
+        document.execCommand('copy');
+        alert('已复制到剪贴板！');
+      });
+    }
+
+    function copyResult(elementId) {
+      copyToClipboard(elementId);
+    }
+
+    // ==================== 页面加载时刷新时间戳 ====================
+    refreshTimestamp();
+    setInterval(refreshTimestamp, 1000);
+  </script>
+</body>
+</html>
