@@ -295,6 +295,34 @@ date: 2026-01-10 00:34:54
       </div>
     </div>
 
+    <!-- UUID 生成工具 -->
+    <div class="tool-card">
+      <div class="tool-title">🆔 UUID 生成器</div>
+
+      <div class="tool-input-group">
+        <label class="tool-label">UUID 格式</label>
+        <select class="tool-select" id="uuidFormat">
+          <option value="standard">标准格式 (xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx)</option>
+          <option value="nohyphen">无连字符 (xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx)</option>
+          <option value="upper">大写带连字符 (XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX)</option>
+          <option value="upper-nohyphen">大写无连字符 (XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX)</option>
+        </select>
+      </div>
+
+      <div class="tool-input-group">
+        <label class="tool-label">生成数量</label>
+        <input type="number" class="tool-input" id="uuidCount" value="1" min="1" max="100" placeholder="1-100">
+      </div>
+
+      <div class="tool-buttons">
+        <button class="tool-btn success" onclick="generateUUID()">生成 UUID</button>
+        <button class="tool-btn secondary" onclick="copyAllUUIDs()">复制全部</button>
+        <button class="tool-btn secondary" onclick="clearUUIDs()">清空</button>
+      </div>
+
+      <div class="tool-result" id="uuidResult" style="display: none;"></div>
+    </div>
+
   </div>
 
   <script>
@@ -430,6 +458,79 @@ date: 2026-01-10 00:34:54
       } catch (e) {
         document.getElementById('unicodeResult').value = '解码失败: ' + e.message;
       }
+    }
+
+    // ==================== UUID 生成工具 ====================
+    function generateUUID() {
+      const format = document.getElementById('uuidFormat').value;
+      const count = parseInt(document.getElementById('uuidCount').value) || 1;
+      const resultDiv = document.getElementById('uuidResult');
+
+      if (count < 1 || count > 100) {
+        alert('生成数量必须在 1-100 之间');
+        return;
+      }
+
+      let uuids = [];
+      for (let i = 0; i < count; i++) {
+        let uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+          const r = Math.random() * 16 | 0;
+          const v = c === 'x' ? r : (r & 0x3 | 0x8);
+          return v.toString(16);
+        });
+
+        // 根据选择的格式处理 UUID
+        switch (format) {
+          case 'nohyphen':
+            uuid = uuid.replace(/-/g, '');
+            break;
+          case 'upper':
+            uuid = uuid.toUpperCase();
+            break;
+          case 'upper-nohyphen':
+            uuid = uuid.replace(/-/g, '').toUpperCase();
+            break;
+        }
+
+        uuids.push(uuid);
+      }
+
+      // 显示结果
+      if (count === 1) {
+        resultDiv.textContent = uuids[0];
+      } else {
+        resultDiv.innerHTML = uuids.map((uuid, index) =>
+          `<div style="margin-bottom: 4px; padding: 4px; background: #2d2d2d; border-radius: 4px;">${index + 1}. ${uuid}</div>`
+        ).join('');
+      }
+      resultDiv.style.display = 'block';
+    }
+
+    function copyAllUUIDs() {
+      const resultDiv = document.getElementById('uuidResult');
+      const text = resultDiv.textContent || resultDiv.innerText;
+
+      if (!text || text === '请输入时间戳或日期时间' || text.includes('请输入 JSON 字符串')) {
+        alert('请先生成 UUID');
+        return;
+      }
+
+      // 提取纯 UUID 文本（移除序号）
+      const uuidsOnly = text.split('\n').map(line => {
+        const match = line.match(/^\d+\.\s+(.+)$/);
+        return match ? match[1] : line;
+      }).join('\n');
+
+      navigator.clipboard.writeText(uuidsOnly).then(() => {
+        alert('已复制 ' + (text.match(/\n/g) || []).length + ' 个 UUID 到剪贴板！');
+      }).catch(err => {
+        alert('复制失败');
+      });
+    }
+
+    function clearUUIDs() {
+      document.getElementById('uuidResult').style.display = 'none';
+      document.getElementById('uuidResult').textContent = '';
     }
 
     // ==================== 通用复制功能 ====================
